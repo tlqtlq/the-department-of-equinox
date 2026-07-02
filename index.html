@@ -12,20 +12,101 @@
             background-color: #ffffff;
             color: #000000;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
-        /* Style the title */
+        /* Center the title */
         h1 {
-            margin: 0;
+            margin: 0 0 30px 0;
             font-size: 2rem;
             font-weight: 700;
             letter-spacing: -0.5px;
+            text-align: center;
+        }
+
+        /* Style the appointment button */
+        .equinox-btn {
+            background-color: #1a1a1a;
+            color: #ffffff;
+            border: none;
+            padding: 14px 28px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 6px;
+            outline: none;
+            transition: background-color 1s ease, color 1s ease, font-size 1s ease;
+        }
+
+        /* Styles applied when the button transitions */
+        .equinox-btn.faded {
+            background-color: transparent !important;
+            color: #000000;
+            font-size: 1.75rem;
+            font-weight: 700;
+            cursor: default;
+            pointer-events: none; /* Prevents further clicks */
+        }
+
+        /* Invisible container for the YouTube API player */
+        #yt-audio-container {
+            position: absolute;
+            width: 0;
+            height: 0;
+            opacity: 0;
+            pointer-events: none;
         }
     </style>
 </head>
 <body>
 
     <h1>The Department of Equinox</h1>
+
+    <button id="appointmentBtn" class="equinox-btn">Schedule an Appointment with Father Equinox</button>
+
+    <div id="yt-audio-container"></div>
+
+    <script>
+        // 1. Asynchronously load the YouTube Iframe Player API
+        var tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        var firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+        var player;
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('yt-audio-container', {
+                height: '0',
+                width: '0',
+                videoId: 'KJotmmDJWAg', // Video ID extracted from your link
+                playerVars: {
+                    'playsinline': 1
+                }
+            });
+        }
+
+        // 2. Handle button click behavior
+        var dynamicClickToken = false;
+        const btn = document.getElementById('appointmentBtn');
+
+        btn.addEventListener('click', () => {
+            // Check to ensure it executes once and only once
+            if (!dynamicClickToken) {
+                dynamicClickToken = true;
+
+                // Play the sound via the YouTube API
+                if (player && typeof player.playVideo === 'function') {
+                    player.playVideo();
+                }
+
+                // Smoothly fade text, text size, and completely eliminate background
+                btn.classList.add('faded');
+                btn.textContent = "$2,500,000,000";
+            }
+        });
+    </script>
 
 </body>
 </html>
