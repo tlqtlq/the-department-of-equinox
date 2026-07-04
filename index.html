@@ -5,10 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Department of Equinox</title>
     <style>
-        /* Reset default margins and set a clean background */
         body {
             margin: 0;
-            padding: 20px; /* Adds a little breathing room from the edges */
+            padding: 20px;
             background-color: #ffffff;
             color: #000000;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -16,8 +15,6 @@
             flex-direction: column;
             align-items: center;
         }
-
-        /* Center the title */
         h1 {
             margin: 0 0 30px 0;
             font-size: 2rem;
@@ -25,8 +22,6 @@
             letter-spacing: -0.5px;
             text-align: center;
         }
-
-        /* Style the appointment button */
         .equinox-btn {
             background-color: #1a1a1a;
             color: #ffffff;
@@ -39,18 +34,35 @@
             outline: none;
             transition: background-color 1s ease, color 1s ease, font-size 1s ease;
         }
-
-        /* Styles applied when the button transitions */
         .equinox-btn.faded {
             background-color: transparent !important;
             color: #000000;
             font-size: 1.75rem;
             font-weight: 700;
             cursor: default;
-            pointer-events: none; /* Prevents further clicks */
+            pointer-events: none;
         }
-
-        /* Invisible container for the YouTube API player */
+        #payment-container {
+            margin-top: 40px;
+            max-width: 800px;
+            text-align: center;
+            font-size: 1.1rem;
+            line-height: 1.5;
+            opacity: 0;
+            transition: opacity 0.8s ease;
+        }
+        #payment-container.visible {
+            opacity: 1;
+        }
+        .typing-text {
+            display: inline-block;
+            white-space: pre-wrap;
+        }
+        .char {
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            color: #000000;
+        }
         #yt-audio-container {
             position: absolute;
             width: 0;
@@ -61,52 +73,65 @@
     </style>
 </head>
 <body>
-
     <h1>The Department of Equinox</h1>
-
     <button id="appointmentBtn" class="equinox-btn">Schedule an Appointment with Father Equinox</button>
-
+    <div id="payment-container">
+        <div id="payment-text" class="typing-text"></div>
+    </div>
     <div id="yt-audio-container"></div>
 
     <script>
-        // 1. Asynchronously load the YouTube Iframe Player API
         var tag = document.createElement('script');
         tag.src = "https://www.youtube.com/iframe_api";
         var firstScriptTag = document.getElementsByTagName('script')[0];
         firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
+        
         var player;
         function onYouTubeIframeAPIReady() {
             player = new YT.Player('yt-audio-container', {
                 height: '0',
                 width: '0',
-                videoId: 'KJotmmDJWAg', // Video ID extracted from your link
-                playerVars: {
-                    'playsinline': 1
-                }
+                videoId: 'KJotmmDJWAg',
+                playerVars: { 'playsinline': 1 }
             });
         }
 
-        // 2. Handle button click behavior
-        var dynamicClickToken = false;
         const btn = document.getElementById('appointmentBtn');
+        const paymentContainer = document.getElementById('payment-container');
+        const paymentText = document.getElementById('payment-text');
+        const paymentList = "Venmo, CashApp, PayPal, Apple Pay, Google Pay, Samsung Pay, Zelle, Stripe, Square, Skrill, Neteller, Payoneer, Alipay, WeChat Pay, Klarna, Afterpay, Affirm, Sezzle, ClearPay, Openpay, Laybuy, Zip, Shopify Payments, Amazon Pay, Dwolla, TransferWise (Wise), WorldRemit, Remitly, Ria, Paysafecard, Neosurf, BitPay, Coinbase Commerce Venmo, CashApp, PayPal, Apple Pay, Google Pay, Samsung Pay, Zelle, Stripe, Square, Skrill, Neteller, Payoneer, Alipay, WeChat Pay, Klarna, Afterpay, Affirm, Sezzle, ClearPay, Openpay, Laybuy, Zip, Shopify Payments, Amazon Pay, Dwolla, TransferWise (Wise), WorldRemit, Remitly, Ria, Paysafecard, Neosurf, BitPay, Coinbase Commerce Venmo, CashApp, PayPal, Apple Pay, Google Pay, Samsung Pay, Zelle, Stripe, Square, Skrill, Neteller, Payoneer, Alipay, WeChat Pay, Klarna, Afterpay, Affirm, Sezzle, ClearPay, Openpay, Laybuy, Zip, Shopify Payments, Amazon Pay, Dwolla, TransferWise (Wise), WorldRemit, Remitly, Ria, Paysafecard, Neosurf, BitPay, Coinbase Commerce Venmo, CashApp, PayPal, Apple Pay, Google Pay, Samsung Pay, Zelle, Stripe, Square, Skrill, Neteller, Payoneer, Alipay, WeChat Pay, Klarna, Afterpay, Affirm, Sezzle, ClearPay, Openpay, Laybuy, Zip, Shopify Payments, Amazon Pay, Dwolla, TransferWise (Wise), WorldRemit, Remitly, Ria, Paysafecard, Neosurf, BitPay, Coinbase Commerce Venmo, CashApp, PayPal, Apple Pay, Google Pay, Samsung Pay, Zelle, Stripe, Square, Skrill, Neteller, Payoneer, Alipay, WeChat Pay, Klarna, Afterpay, Affirm, Sezzle, ClearPay, Openpay, Laybuy, Zip, Shopify Payments, Amazon Pay, Dwolla, TransferWise (Wise), WorldRemit, Remitly, Ria, Paysafecard, Neosurf, BitPay, Coinbase Commerce Venmo, CashApp, PayPal, Apple Pay, Google Pay, Samsung Pay, Zelle, Stripe, Square, Skrill, Neteller, Payoneer, Alipay, WeChat Pay, Klarna, Afterpay, Affirm, Sezzle, ClearPay, Openpay, Laybuy, Zip, Shopify Payments, Amazon Pay, Dwolla, TransferWise (Wise), WorldRemit, Remitly, Ria, Paysafecard, Neosurf, BitPay, Coinbase Commerce";
+        
+        var dynamicClickToken = false;
 
         btn.addEventListener('click', () => {
-            // Check to ensure it executes once and only once
             if (!dynamicClickToken) {
                 dynamicClickToken = true;
-
-                // Play the sound via the YouTube API
+                
                 if (player && typeof player.playVideo === 'function') {
                     player.playVideo();
                 }
-
-                // Smoothly fade text, text size, and completely eliminate background
+                
                 btn.classList.add('faded');
                 btn.textContent = "$2,500,000,000";
+
+                paymentContainer.classList.add('visible');
+                
+                paymentText.innerHTML = '';
+                for (let char of paymentList) {
+                    const span = document.createElement('span');
+                    span.className = 'char';
+                    span.textContent = char;
+                    paymentText.appendChild(span);
+                }
+                
+                const chars = paymentText.querySelectorAll('.char');
+                chars.forEach((char, index) => {
+                    setTimeout(() => {
+                        char.style.opacity = '1';
+                    }, index * 35);
+                });
             }
         });
     </script>
-
 </body>
 </html>
